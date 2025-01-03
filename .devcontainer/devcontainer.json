@@ -7,7 +7,36 @@
 		"context": "..",
 		// Update the 'dockerFile' property if you aren't using the standard 'Dockerfile' filename.
 		"dockerfile": "../Dockerfile"
-	}
+
+	},
+	"customizations": {
+		"vscode": {
+			"extensions": [
+				"ms-azuretools.vscode-docker",
+				"Gruntfuggly.todo-tree",
+				"bierner.markdown-mermaid",
+				"yzhang.markdown-all-in-one",
+				"Meezilla.json",
+				"maattdd.gitless"
+			]
+		}
+	},
+	
+	// "features": {
+    //     "ghcr.io/devcontainers/features/common-utils:2": {
+    //         "installZsh": "false",
+    //         "username": "vscode",
+    //         "upgradePackages": "false"
+    //     },
+    //     "ghcr.io/devcontainers/features/git:1": {
+    //         "version": "os-provided",
+    //         "ppa": "false"
+    //     }
+    // },
+
+	// "mounts": [
+	// 	"source=${env:HOME}/.gnupg,target=/root/.gnupg,type=bind"
+	// ]
 
 	// Features to add to the dev container. More info: https://containers.dev/features.
 	// "features": {},
