@@ -1,6 +1,6 @@
 # Detailed Design
 
-# Description
+## Description
 
 - The system shall accept login credentials and submits them to the Spotify API.
 - The system shall handle the response from the Spotify API.
@@ -12,9 +12,9 @@
 - The system shall accept a playlist in XCF format.
 - The system shall accept the playlist to create upon successful login.
 
-# State Machine
+## State Machine
 
-## System Sequence Diagram
+### System Sequence Diagram
 
 ```mermaid
 %%{init: {'sequence': {'messageAlign': 'left', 'noteAlign': 'left'}}}%%
@@ -85,7 +85,8 @@ sequenceDiagram
     
     deactivate UserClient
 ```
-## Service State Diagram
+
+### Service State Diagram
 
 ```mermaid
 stateDiagram-v2
@@ -121,40 +122,41 @@ stateDiagram-v2
 
     LoggedOut --> [*]
 ```
-### Start
+
+#### Start
 
 | Trigger | Guard | Behavior | Destination State |
 | --- | --- | --- | --- |
 | `PUT /authorize` | - | Send to client a redirect to Spotify authorization page. | `AuthorizationPending` |
 
-### AuthorizationPending
+#### AuthorizationPending
 
 | Trigger | Guard | Behavior | Destination State |
 | --- | --- | --- | --- |
 | `PUT /authorized` | auth_status != 200 | Send to client an error message. | Terminal |
 | `PUT /authorized` | auth_status == 200 | Request access token from Spotify API. | `AccessTokenPending` |
 
-### AccessTokenPending
+#### AccessTokenPending
 
-### Authorized
+#### Authorized
 
-### ResolvingURIs
+#### ResolvingURIs
 
-### CreatingPlaylist
+#### CreatingPlaylist
 
-### AddingTracks
+#### AddingTracks
 
-### LoggingOut
+#### LoggingOut
 
-## Token Expiration and Refresh
+### Token Expiration and Refresh
 
 - The system shall handle token timeout from each of the following states.
-    - Authorized
-    - ResolvingURIs
-    - CreatingPlaylist
-    - AddingTracks
-    - LoggingOut
-        - If the token expires while logging out, the system will transition directly to `LoggedOut` regardless of the outcome of the `logout` operation.
+  - Authorized
+  - ResolvingURIs
+  - CreatingPlaylist
+  - AddingTracks
+  - LoggingOut
+    - If the token expires while logging out, the system will transition directly to `LoggedOut` regardless of the outcome of the `logout` operation.
 
 - The system shall handle token timeout with a transition from the originating state to a `TokenExpired` state.
 - The system shall transition back to the originating state after a successful token refresh.
