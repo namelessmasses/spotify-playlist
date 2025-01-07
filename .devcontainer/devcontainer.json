@@ -23,7 +23,10 @@
 				"ms-python.vscode-pylance",
 				"ms-python.python",
 				"ms-python.debugpy",
-				"maattdd.gitless"
+				"maattdd.gitless",
+				"yzhang.markdown-all-in-one",
+				"bierner.markdown-mermaid",
+				"DavidAnson.vscode-markdownlint"
 			]
 		}
 	}
