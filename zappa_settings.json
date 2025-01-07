@@ -1,0 +1,16 @@
+{
+    "dev": {
+        "app_function": "import-playlist.app",
+        "exclude": [
+            "boto3",
+            "dateutil",
+            "botocore",
+            "s3transfer",
+            "concurrent"
+        ],
+        "profile_name": "default",
+        "project_name": "spotify-playlist",
+        "runtime": "python3.12",
+        "s3_bucket": "com-ngarimu-s3-usw2-playlist-import"
+    }
+}
