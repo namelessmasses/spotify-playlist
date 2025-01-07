@@ -14,7 +14,16 @@
 	"customizations": {
 		"vscode": {
 			"extensions": [
-				"ms-python.isort"
+				"ms-python.isort",
+				"amazonwebservices.aws-toolkit-vscode",
+				"dbaeumer.vscode-eslint",
+				"GitHub.copilot-chat",
+				"GitHub.copilot",
+				"GitHub.vscode-pull-request-github",
+				"ms-python.vscode-pylance",
+				"ms-python.python",
+				"ms-python.debugpy",
+				"maattdd.gitless"
 			]
 		}
 	}
