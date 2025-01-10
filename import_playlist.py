@@ -171,6 +171,18 @@ def import_playlist():
 
     logger.info("/import")
 
+    # Check the stored state against the request state
+    request_state = request.headers.get("state")
+    logger.debug(f"{request_state=}")
+
+    session_state = flask.session["state"]
+    logger.debug(f"{session_state=}")
+
+    if request_state != session_state:
+        logger.error("State mismatch")
+        # TODO: Trigger logout
+        return "State mismatch", 400
+
     data = request.get_json()
     logger.debug(f"{data=}")
 
