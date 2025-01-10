@@ -14,6 +14,7 @@ logging.basicConfig(
     level=logging.DEBUG)
 
 logger = logging.getLogger('IMPORT_PLAYLIST')
+logger.propagate = True
 
 app = Flask(__name__)
 app.secret_key = os.getenv("APP_CLIENT_SECRET")
@@ -117,6 +118,7 @@ def authorized():
     logger.debug(f"{display_name=}")
     
     user_id = user_profile_response["id"]
+    flask.session["user_id"] = user_id
     logger.debug(f"{user_id=}")
 
     # return a document that allows a user to select a file from the client filesystem to upload as the playlist data to import

@@ -1,6 +1,6 @@
 {
     "dev": {
-        "app_function": "import-playlist.app",
+        "app_function": "import_playlist.app",
         "exclude": [
             "boto3",
             "dateutil",
