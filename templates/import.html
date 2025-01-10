@@ -42,7 +42,7 @@
             const fileContents = await file.text();
             const jsonContents = JSON.parse(fileContents);
 
-            const response = await fetch('/dev/import', {
+            const response = await fetch(window.location.href.split('/authorized')[0] + '/import', {
                 method: 'POST',
                 headers: {
                     'Content-Type': 'application/json',
