@@ -13,6 +13,7 @@ class ImportPlaylistTestCase(unittest.TestCase):
         # Set up the test client
         self.app = app.test_client()
         self.app.testing = True
+        self.state = None
 
     def test_index(self):
         # Test the index route
@@ -76,8 +77,8 @@ class ImportPlaylistTestCase(unittest.TestCase):
         # Parse the URL query parameters
         parsed_url = urlparse(authorize_response_location)
         query_params = parse_qs(parsed_url.query)
-        state = query_params.get('state', [None])[0]
-        response = self.app.get(f'/authorized?code={mock_code}&state={state}')
+        self.state = query_params.get('state', [None])[0]
+        response = self.app.get(f'/authorized?code={mock_code}&state={self.state}')
 
         encoded_credentials = base64.b64encode(f"{os.getenv('APP_CLIENT_ID')}:{os.getenv('APP_CLIENT_SECRET')}".encode()).decode()
         mock_post_api_token.assert_called_once_with(
@@ -102,8 +103,69 @@ class ImportPlaylistTestCase(unittest.TestCase):
         self.assertEqual(response.status_code, 200)
         self.assertIn(f'Authorized as display_name={mock_display_name} id={mock_user_id}'.encode(), response.data)
 
+    @patch('import_playlist.requests.post')
+    @patch('import_playlist.requests.get')
+    def test_import(self, mock_get, mock_post):
+        # First, run the test_authorize to set up the authorization
+        self.test_authorize()
 
+        # Test the import route
 
+        # Mock the Spotify API call to search for a track
+        mock_search_response = MagicMock()
+        mock_search_response.status_code = 200
+        mock_search_response.json.return_value = {
+            'tracks': {
+                'items': [
+                    {
+                        "id": "4AhfNoZHwYnvD6pKBXrLrg",
+                        "uri": "spotify:track:4AhfNoZHwYnvD6pKBXrLrg"
+                    }
+                ]
+            }}
+        mock_get.return_value = mock_search_response
+        
+        # Mock the Spotify API call to create a playlist
+        # Mock the Spotify API call to create a playlist
+        mock_playlist_create_response = MagicMock()
+        mock_playlist_create_response.status_code = 201
+        mock_playlist_create_response.json.return_value = {
+            "id": "fake_playlist_id"
+        }
+        
+        # Mock the Spotify API call to add a track to a playlist
+        mock_playlist_add_response = MagicMock()
+        mock_playlist_add_response.status_code = 201
+        
+        # Set the side_effect of mock_post to handle multiple calls
+        mock_post.side_effect = [mock_playlist_create_response, mock_playlist_add_response]
+
+        # Send the body
+        # Request body:
+        # {
+        #     "playlist_id": "playlist_id",
+        #     "playlist_tracks": [
+        #         {
+        #             "track_title": "Artist - Title"
+        #         },
+        #         ...
+        #     ]
+        # }
+        # The headers should include the state parameter.
+        response = self.app.post('/import', 
+                                 json={
+                                    "playlist_name": "fake_playlist_name",
+                                    "playlist_tracks": [
+                                        {
+                                            "track_title": "Frank Sinatra - My Way"
+                                        }
+                                    ]
+                                },
+                                headers={
+                                    'state': self.state
+                                })
+        self.assertEqual(response.status_code, 201)
+        self.assertIn(b'Imported playlist', response.data)
 
 if __name__ == '__main__':
     unittest.main()
