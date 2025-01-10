@@ -1,8 +1,14 @@
 {
-    "playlist_id": "New Imported Playlist",
+    "playlist_name": "New Imported Playlist",
     "playlist_tracks": [
         {
             "track_title": "Frank Sinatra - My Way"
+        },
+        {
+            "track_title": "The Beatles - Hey Jude"
+        },
+        {
+            "track_title": "Elvis Presley - Can't Help Falling In Love"
         }
     ]
 }
