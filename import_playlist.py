@@ -115,8 +115,28 @@ def authorized():
 
     flask.session["user_id"] = user_profile_response["id"]
 
-    # Return 200 "Authorized"
-    return f"Authorized as display_name={user_profile_response['display_name']} id={user_profile_response['id']}", 200
+    # return a document that allows a user to upload a JSON file with the playlist data to import
+    return '''
+        <!doctype html>
+        <title>Import Playlist</title>
+        <h1>Import Playlist</h1>
+        <p>Authenticated as
+        <table>
+            <th>Key</th><th>Value</th>
+            <tr><td>Display name</td><td>{display_name}</td></tr>
+            <tr><td>ID</td><td>{id}</td></tr>
+        </table>
+        </p>
+        <p>Upload a JSON file with the playlist data to import.</p>
+        
+        <form method="post" action="/import" enctype="application/json">
+            <label for="playlist_name">Playlist Name</label>
+            <input type="text" name="playlist_name" id="playlist_name" required>
+            <label for="playlist_tracks">Playlist Tracks</label>
+            <textarea name="playlist_tracks" id="playlist_tracks" required></textarea>
+            <input type="submit" value="Import">
+        </form>
+    '''
 
 def create_query(playlist_track):
     track_title = playlist_track["track_title"]
