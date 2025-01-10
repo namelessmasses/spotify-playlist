@@ -1,4 +1,5 @@
 .venv/
 .devcontainer/noop.txt
-__pycache__/import-playlist.cpython-312.pyc
+__pycache__/
 .env
+
