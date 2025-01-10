@@ -31,6 +31,7 @@ def convert(m3u_filename):
         if line.startswith("#EXTINF"):
             track_title = line.split(",")[1]
             tracks.append(track_title)
+            continue
             
     if not tracks:
         raise ValueError("No tracks found")
