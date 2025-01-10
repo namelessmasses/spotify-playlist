@@ -22,7 +22,7 @@ app.secret_key = os.getenv("APP_CLIENT_SECRET")
 @app.route('/')
 def index():
     logger.info("/")
-    return "Hello World"
+    return '<a href="/authorize">Login with Spotify</a>'
 
 @app.route('/authorize')
 def authorize():
@@ -256,7 +256,11 @@ def import_playlist():
         "tracks": playlist_tracks
     }, response.status_code
 
-
+@app.route('/logout')
+def logout():
+    logger.info("/logout")
+    flask.session.clear()
+    return redirect(url_for("index"))
 
 if __name__ == '__main__':
     app.run(debug=True)

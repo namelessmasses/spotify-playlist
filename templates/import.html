@@ -30,6 +30,11 @@
         <input type="hidden" name="state" value="{{ session_state }}">
         <input type="submit" value="Import">
     </form>
+
+    <form id="logout" action="/logout" method="GET">
+        <input type="submit" value="Logout"/>
+    </form>
+
     <script>
         document.getElementById('importForm').onsubmit = async function (event) {
             event.preventDefault();
