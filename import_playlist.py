@@ -256,9 +256,10 @@ def import_playlist():
         "tracks": playlist_tracks
     }, response.status_code
 
-@app.route('/logout')
+@app.route('/logout', methods=["POST"])
 def logout():
     logger.info("/logout")
+
     flask.session.clear()
     return redirect(url_for("index"))
 

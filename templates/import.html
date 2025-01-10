@@ -31,9 +31,12 @@
         <input type="submit" value="Import">
     </form>
 
-    <form id="logout" action="/logout" method="GET">
-        <input type="submit" value="Logout"/>
+    <form id="logout" method="POST">
+        <input type="submit" value="Logout" />
     </form>
+
+    <h1>Result:</h1>
+    <pre><div id="result"></div></pre>
 
     <script>
         document.getElementById('importForm').onsubmit = async function (event) {
@@ -47,6 +50,9 @@
             const fileContents = await file.text();
             const jsonContents = JSON.parse(fileContents);
 
+            resultArea = document.getElementById('result');
+            resultArea.innerText = 'Importing...';
+
             const response = await fetch(window.location.href.split('/authorized')[0] + '/import', {
                 method: 'POST',
                 headers: {
@@ -56,8 +62,30 @@
                 body: JSON.stringify(jsonContents)
             });
 
+            resultArea.innerText = "Importing...Done";
             const result = await response.json();
-            alert(result.msg);
+            resultArea.innerText = JSON.stringify(result, null, 2);
+        };
+    </script>
+
+    <script>
+        document.getElementById('logout').onsubmit = async function (event) {
+            event.preventDefault();
+            const state = document.querySelector('input[name="state"]').value;
+            resultArea = document.getElementById('result');
+            logoutUri = window.location.href.split('/authorized')[0] + '/logout';
+            resultArea.innerText = 'Logging out...' + logoutUri;
+            const response = await fetch(logoutUri, {
+                method: 'POST',
+                headers: {
+                    'Content-Type': 'application/json',
+                    'state': state
+                }
+            });
+            resultArea.innerText = 'Logging out...Done';
+            if (response.redirected){
+                window.location.href = response.url;
+            }
         };
     </script>
 </body>
