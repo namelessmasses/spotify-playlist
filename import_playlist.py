@@ -144,7 +144,7 @@ def resolve_uris(access_token, playlist_tracks):
             if len(response_data["tracks"]["items"]) > 0:
                 playlist_track["uri"] = response_data["tracks"]["items"][0]["uri"]
                 logger.debug(f"resolved track: {playlist_track}")
-                resolved_tracks.append(playlist_track["uri"])
+                resolved_tracks.append(playlist_track)
             else:
                 logger.info(f"Track not found: {playlist_track}")
                 playlist_track["uri"] = None
@@ -223,7 +223,7 @@ def import_playlist():
     response = requests.post(f"https://api.spotify.com/v1/playlists/{playlist_id}/tracks",
                             headers=headers,
                             json={
-                                "uris": ' '.join([track.uri for track in resolved_tracks])
+                                "uris": ' '.join([track['uri'] for track in resolved_tracks])
                             })
     
     for track in resolved_tracks:
