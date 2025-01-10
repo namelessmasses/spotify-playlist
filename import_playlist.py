@@ -1,7 +1,7 @@
 #!/usr/bin/python3
 
 import flask
-from flask import Flask, request, redirect, url_for
+from flask import Flask, request, redirect, url_for, render_template
 import os
 import base64
 import requests
@@ -52,7 +52,7 @@ def authorize():
 
 @app.route('/authorized')
 def authorized():
-    logger.info("/authorized")
+    logger.info("/authorized - origin: %s referrer: %s host: %s", request.origin, request.referrer, request.host)
 
     request_state = request.args.get("state")
     logger.debug(f"{request_state=}")
@@ -113,30 +113,14 @@ def authorized():
     user_profile_response = response.json()
     logger.debug(f"user id response: {user_profile_response}")
 
-    flask.session["user_id"] = user_profile_response["id"]
+    display_name = user_profile_response["display_name"]
+    logger.debug(f"{display_name=}")
+    
+    user_id = user_profile_response["id"]
+    logger.debug(f"{user_id=}")
 
-    # return a document that allows a user to upload a JSON file with the playlist data to import
-    return '''
-        <!doctype html>
-        <title>Import Playlist</title>
-        <h1>Import Playlist</h1>
-        <p>Authenticated as
-        <table>
-            <th>Key</th><th>Value</th>
-            <tr><td>Display name</td><td>{display_name}</td></tr>
-            <tr><td>ID</td><td>{id}</td></tr>
-        </table>
-        </p>
-        <p>Upload a JSON file with the playlist data to import.</p>
-        
-        <form method="post" action="/import" enctype="application/json">
-            <label for="playlist_name">Playlist Name</label>
-            <input type="text" name="playlist_name" id="playlist_name" required>
-            <label for="playlist_tracks">Playlist Tracks</label>
-            <textarea name="playlist_tracks" id="playlist_tracks" required></textarea>
-            <input type="submit" value="Import">
-        </form>
-    '''
+    # return a document that allows a user to select a file from the client filesystem to upload as the playlist data to import
+    return render_template('import.html', display_name=display_name, user_id=user_id, session_state=session_state)
 
 def create_query(playlist_track):
     track_title = playlist_track["track_title"]
@@ -252,11 +236,15 @@ def import_playlist():
     # Add tracks to the playlist
     playlist_id = response_data["id"]
     logger.debug(f"{playlist_id=}")
+    logger.debug(f'adding tracks to playlist {playlist_id} with {headers=}')
+    json = {
+        "uris": [track['uri'] for track in resolved_tracks],
+        "position": 0
+    }
+    logger.debug(f"{json=}")
     response = requests.post(f"https://api.spotify.com/v1/playlists/{playlist_id}/tracks",
                             headers=headers,
-                            json={
-                                "uris": ' '.join([track['uri'] for track in resolved_tracks])
-                            })
+                            json=json)
     
     for track in resolved_tracks:
         track['status_code'] = response.status_code

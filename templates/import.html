@@ -1,0 +1,60 @@
+<!DOCTYPE html>
+<html lang="en">
+
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Import Playlist</title>
+</head>
+
+<body>
+    <h1>Import Playlist</h1>
+    <p>Authenticated as
+    <table>
+        <th>Key</th>
+        <th>Value</th>
+        <tr>
+            <td>Display name</td>
+            <td>{{ display_name }}</td>
+        </tr>
+        <tr>
+            <td>ID</td>
+            <td>{{ user_id }}</td>
+        </tr>
+    </table>
+    </p>
+    <p>Upload a JSON file with the playlist data to import.</p>
+
+    <form id="importForm" enctype="multipart/form-data">
+        <input type="file" name="file" id="file" accept=".json" required>
+        <input type="hidden" name="state" value="{{ session_state }}">
+        <input type="submit" value="Import">
+    </form>
+    <script>
+        document.getElementById('importForm').onsubmit = async function (event) {
+            event.preventDefault();
+            const fileInput = document.getElementById('file');
+            const file = fileInput.files[0];
+            const state = document.querySelector('input[name="state"]').value;
+            const formData = new FormData();
+            formData.append('file', file);
+
+            const fileContents = await file.text();
+            const jsonContents = JSON.parse(fileContents);
+
+            const response = await fetch('/import', {
+                method: 'POST',
+                headers: {
+                    'Content-Type': 'application/json',
+                    'state': state
+                },
+                body: JSON.stringify(jsonContents)
+            });
+
+            const result = await response.json();
+            alert(result.msg);
+        };
+    </script>
+</body>
+
+</html>
