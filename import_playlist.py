@@ -148,8 +148,10 @@ def resolve_uris(access_token, playlist_tracks):
         if response.status_code == 200:
             response_data = response.json()
             if len(response_data["tracks"]["items"]) > 0:
-                playlist_track["uri"] = response_data["tracks"]["items"][0]["uri"]
-                logger.debug(f"resolved track: {playlist_track}")
+                resolved_track = response_data["tracks"]["items"][0]
+                playlist_track["uri"] = resolved_track["uri"]
+                playlist_track["resolved_as"] = resolved_track["name"]
+                logger.debug(f"resolved: {playlist_track}")
                 resolved_tracks.append(playlist_track)
             else:
                 logger.info(f"Track not found: {playlist_track}")
